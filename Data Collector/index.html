@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waiting List • Raffle Pool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .heading-font {
+            font-family: 'Playfair Display', sans-serif;
+        }
+
+        .ticket {
+            animation: spinTicket 2.5s linear forwards;
+        }
+
+        @keyframes spinTicket {
+            0% { transform: rotate(0deg) scale(0.8); }
+            70% { transform: rotate(720deg) scale(1.1); }
+            100% { transform: rotate(1080deg) scale(1); }
+        }
+
+        .modal {
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .count-number {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 min-h-screen flex flex-col">
+    <!-- HEADER -->
+    <header class="border-b border-gray-100 bg-white sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-yellow-400 rounded-2xl flex items-center justify-center text-3xl">🎟️</div>
+                <h1 class="heading-font text-3xl font-bold tracking-tight">Raffle Pool</h1>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="how-it-works.html" class="hover:text-yellow-600 transition-colors">How it works</a>
+                <a href="prize-pool.html" class="hover:text-yellow-600 transition-colors">Prize pool</a>
+                <a href="faq.html" class="hover:text-yellow-600 transition-colors">FAQ</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl mx-auto px-6 py-16 w-full">
+        <!-- HERO / COUNT -->
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-6 py-2 bg-yellow-100 text-yellow-700 rounded-3xl text-sm font-medium mb-6">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                LIVE WAITING LIST
+            </div>
+            
+            <h2 class="heading-font text-6xl font-bold tracking-tighter leading-none mb-3">
+                Join the <span class="text-yellow-500">Exclusive Pool</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-md mx-auto">
+                Submit your details to enter the raffle waiting list.<br>
+                2 Random people are picked every week
+            </p>
+
+            <!-- LIVE COUNT -->
+            <div class="mt-10 flex justify-center items-baseline gap-4">
+                <div id="count-container" 
+                     class="inline-flex items-center bg-white border border-gray-200 shadow-xl shadow-yellow-100/50 rounded-3xl px-8 py-6 text-center">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 tracking-widest">ALREADY IN THE POOL</p>
+                        <div id="user-count" 
+                             class="count-number text-7xl font-semibold heading-font text-yellow-600 tabular-nums">1,220</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="max-w-xl mx-auto">
+            <div class="bg-white border border-gray-200 shadow-2xl rounded-3xl p-10">
+                <form id="submission-form" class="space-y-7">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-2">Full Name</label>
+                        <input id="name" type="text" required 
+                               class="w-full px-6 py-5 bg-gray-50 border border-gray-200 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 rounded-2xl text-lg outline-none transition-all">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Country</label>
+                            <input id="country" type="text" required placeholder="Nigeria"
+                                   class="w-full px-6 py-5 bg-gray-50 border border-gray-200 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 rounded-2xl text-lg outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Zip / Postal Code</label>
+                            <input id="zipcode" type="text" required 
+                                   class="w-full px-6 py-5 bg-gray-50 border border-gray-200 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 rounded-2xl text-lg outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Phone Number</label>
+                            <input id="phone" type="tel" required 
+                                   class="w-full px-6 py-5 bg-gray-50 border border-gray-200 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 rounded-2xl text-lg outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Email Address</label>
+                            <input id="email" type="email" required 
+                                   class="w-full px-6 py-5 bg-gray-50 border border-gray-200 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 rounded-2xl text-lg outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-2">Residential Address</label>
+                        <textarea id="address" rows="3" required
+                                  class="w-full px-6 py-5 bg-gray-50 border border-gray-200 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 rounded-2xl text-lg outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <button id="submit-btn"
+                            type="submit"
+                            class="w-full bg-yellow-400 hover:bg-yellow-500 active:scale-95 transition-all duration-200 text-gray-900 font-semibold text-xl py-6 rounded-3xl flex items-center justify-center gap-3 shadow-inner">
+                        <span id="btn-text">ENTER THE RAFFLE POOL</span>
+                        <span id="spinner" class="hidden w-6 h-6 border-4 border-gray-900 border-t-transparent rounded-full animate-spin"></span>
+                    </button>
+                </form>
+
+                <p class="text-center text-xs text-gray-400 mt-8">
+                    Your data is stored securely
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- SUCCESS MODAL - Updated (no "Submit Another" button) -->
+    <div id="success-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+        <div class="modal bg-white max-w-md w-full mx-4 rounded-3xl overflow-hidden shadow-2xl">
+            <!-- HEADER -->
+            <div class="bg-gradient-to-r from-yellow-400 to-amber-500 px-8 py-10 text-center relative">
+                <div id="ticket" 
+                     class="ticket mx-auto w-32 h-32 bg-white rounded-2xl shadow-2xl flex items-center justify-center text-7xl mb-4 border-8 border-dashed border-yellow-300">
+                    🎟️
+                </div>
+                <h3 class="heading-font text-4xl font-bold text-white tracking-tighter">YOU'RE IN!</h3>
+                <p class="text-yellow-100 text-lg">Your ticket has been added to the raffle pool</p>
+            </div>
+
+            <!-- BODY -->
+            <div class="p-8 text-center">
+                <div class="text-5xl mb-6">🎉</div>
+                <p class="text-2xl font-semibold text-gray-800">Welcome to the pool!</p>
+                <p id="modal-count" class="text-gray-500 mt-2">You are now the <span class="font-semibold text-yellow-600"></span> member</p>
+                
+                <div class="my-8 border-t border-gray-100"></div>
+                
+                <p class="text-sm text-gray-500 leading-relaxed">
+                    Thank you for joining the waiting list!<br>
+                    Our team will contact you if you win. Good luck!
+                </p>
+            </div>
+
+            <!-- FOOTER - Only CLOSE button now -->
+            <div class="px-8 py-6 border-t">
+                <button onclick="closeModal()" 
+                        class="w-full py-4 text-gray-600 font-medium hover:bg-gray-100 rounded-2xl transition-colors">
+                    CLOSE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-8 text-xs text-gray-400 bg-white">
+        Sponsored by the Musk Foundation
+    </footer>
+
+    <script>
+        // ====================== FIREBASE CONFIG ======================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUAwMAyr8I-LWVfE5xcYyeE_8rnlaZeRU",
+            authDomain: "data-colector-3b24c.firebaseapp.com",
+            projectId: "data-colector-3b24c",
+            storageBucket: "data-colector-3b24c.firebasestorage.app",
+            messagingSenderId: "209522235623",
+            appId: "1:209522235623:web:460de69519964dd9db2a42"
+        };
+
+        let app, db;
+
+        function initializeFirebase() {
+            app = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            return true;
+        }
+
+        // ====================== ELEMENTS ======================
+        let userCountEl, form, submitBtn, btnText, spinner, modal, modalCountSpan;
+
+        // ====================== COUNTER ======================
+        function startLiveCounter() {
+            db.collection("stats").doc("counter").onSnapshot((doc) => {
+                if (doc.exists) {
+                    const count = doc.data().total || 1220;
+                    userCountEl.textContent = count.toLocaleString('en-US');
+                }
+            });
+        }
+
+        // ====================== SUBMISSION ======================
+        async function submitToFirestore(data) {
+            const submissionRef = db.collection("submissions").doc();
+            const counterRef = db.collection("stats").doc("counter");
+
+            await db.runTransaction(async (transaction) => {
+                const counterDoc = await transaction.get(counterRef);
+                let newTotal = 1221;
+                
+                if (counterDoc.exists) {
+                    newTotal = counterDoc.data().total + 1;
+                    transaction.update(counterRef, { total: newTotal });
+                } else {
+                    transaction.set(counterRef, { total: newTotal });
+                }
+                
+                transaction.set(submissionRef, {
+                    name: data.name,
+                    country: data.country,
+                    zipcode: data.zipcode,
+                    phone: data.phone,
+                    email: data.email,
+                    address: data.address,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+        }
+
+        // ====================== CONFETTI ======================
+        function launchRaffleConfetti() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 } };
+            
+            function fire(particleRatio, opts) {
+                confetti({
+                    ...defaults,
+                    ...opts,
+                    particleCount: Math.floor(count * particleRatio),
+                    colors: ['#facc15', '#eab308', '#fefce8', '#854d0e']
+                });
+            }
+            
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+            
+            setTimeout(() => {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#facc15', '#eab308']
+                });
+            }, 400);
+        }
+
+        // ====================== FORM HANDLER ======================
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            btnText.classList.add("hidden");
+            spinner.classList.remove("hidden");
+            
+            const formData = {
+                name: document.getElementById("name").value.trim(),
+                country: document.getElementById("country").value.trim(),
+                zipcode: document.getElementById("zipcode").value.trim(),
+                phone: document.getElementById("phone").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                address: document.getElementById("address").value.trim()
+            };
+            
+            try {
+                await submitToFirestore(formData);
+                
+                // Show success modal
+                modalCountSpan.textContent = (parseInt(userCountEl.textContent.replace(/,/g, '')) + 1).toLocaleString('en-US');
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+                
+                document.getElementById("ticket").style.animation = "spinTicket 2.8s linear forwards";
+                setTimeout(launchRaffleConfetti, 800);
+                
+            } catch (err) {
+                console.error(err);
+                alert("Oops! Something went wrong. Please try again.");
+            } finally {
+                submitBtn.disabled = false;
+                btnText.classList.remove("hidden");
+                spinner.classList.add("hidden");
+            }
+        }
+
+        function closeModal() {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            // Optional: Reset form after closing modal
+            form.reset();
+        }
+
+        // ====================== INIT ======================
+        function initializeApp() {
+            userCountEl = document.getElementById("user-count");
+            form = document.getElementById("submission-form");
+            submitBtn = document.getElementById("submit-btn");
+            btnText = document.getElementById("btn-text");
+            spinner = document.getElementById("spinner");
+            modal = document.getElementById("success-modal");
+            modalCountSpan = document.getElementById("modal-count").querySelector("span");
+
+            initializeFirebase();
+            startLiveCounter();
+            form.addEventListener("submit", handleSubmit);
+
+            // Escape key support
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+                    closeModal();
+                }
+            });
+        }
+
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>

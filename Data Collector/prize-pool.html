@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prize Pool • Raffle Pool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .heading-font {
+            font-family: 'Playfair Display', sans-serif;
+        }
+
+        .prize-card {
+            transition: all 0.3s ease;
+        }
+        
+        .prize-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 min-h-screen flex flex-col">
+    <!-- HEADER -->
+    <header class="border-b border-gray-100 bg-white sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-yellow-400 rounded-2xl flex items-center justify-center text-3xl">🎟️</div>
+                <h1 class="heading-font text-3xl font-bold tracking-tight">Raffle Pool</h1>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="how-it-works.html" class="hover:text-yellow-600 transition-colors">How it works</a>
+                <a href="prize-pool.html" class="text-yellow-600 font-semibold">Prize pool</a>
+                <a href="faq.html" class="hover:text-yellow-600 transition-colors">FAQ</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl mx-auto px-6 py-16 w-full">
+        <div class="text-center mb-16">
+            <h2 class="heading-font text-6xl font-bold tracking-tighter leading-none mb-4">
+                Our Weekly <span class="text-yellow-500">Prize Pool</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-lg mx-auto">
+                Every week, 2 lucky winners are randomly selected and win all the amazing prizes in this pool.
+            </p>
+        </div>
+
+        <!-- PRIZES GRID -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            
+            <!-- Prize 1 -->
+            <div class="prize-card bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-xl">
+                <div class="h-64 bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="pictues\telsa-model3.webp"
+                         alt="Tesla Model 3" 
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="p-8">
+                    <div class="inline-block px-4 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-2xl mb-3">GRAND PRIZE</div>
+                    <h3 class="text-2xl font-semibold heading-font mb-2">Brand New Tesla Model 3</h3>
+                    <p class="text-gray-600">The Tesla Model 3 is the smartest, most thrilling way to go electric. 
+                        <a href="https://www.tesla.com/model3" target="_blank" class="text-yellow-600 hover:underline">Learn more</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Prize 2 -->
+            <div class="prize-card bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-xl">
+                <div class="h-64 bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="pictues/telsa-mobile-charger.avif" 
+                         alt="Tesla Mobile Charger" 
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="p-8">
+                    <div class="inline-block px-4 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-2xl mb-3">ADD-ON</div>
+                    <h3 class="text-2xl font-semibold heading-font mb-2">Tesla Mobile Connector</h3>
+                    <p class="text-gray-600">This compact, lightweight charger is your on-the-go freedom kit. 
+                        It plugs into almost any standard outlet so you can top up your Model 3 wherever life takes you — at a friend's house,
+                         Airbnb, hotel, or during family visits.</p>
+                         <a href="https://www.https://shop.tesla.com/product/mobile-connector" target="_blank" class="text-yellow-600 hover:underline">Learn more</a>
+                </div>
+            </div>
+
+            <!-- Prize 3 -->
+            <div class="prize-card bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-xl">
+                <div class="h-64 bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="pictues/iq3500_portable_main-image.jpg" 
+                         alt="Inverter Generator" 
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="p-8">
+                    <div class="inline-block px-4 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-2xl mb-3">ADD-ON</div>
+                    <h3 class="text-2xl font-semibold heading-font mb-2">Generac iq3500 Inverter Generator</h3>
+                    <p class="text-gray-600">in partnership with GENERAC we're excited to add the iq3500 inverter generator. Offers portability and quiteness</p>
+                    <a href="https://www.generac.com/residential-products/portable-generators/3500-portable-inverter-generator-with-cosense-50st-7723/" class="text-yellow-600 hover:underline" target="_blank">Learn more</a>
+                </div>
+            </div>
+
+       <!---
+            <div class="text-center mt-16 text-gray-500">
+            <p class="text-sm">Prizes are subject to availability. Winners will be contacted directly.</p>
+        </div>
+    -->
+    </main>
+
+    <footer class="text-center py-8 text-xs text-gray-400 bg-white border-t">
+        Sponsored by the Musk Foundation
+    </footer>
+</body>
+</html>
